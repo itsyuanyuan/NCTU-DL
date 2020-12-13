@@ -24,7 +24,7 @@ class model():
 		self.batch_size = batch_size
 	def val_loss(self,X,y):
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        # validation loss 										 	  #
+        	# validation loss 		                              #
 		# This function is on order to track the loss of testing data #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		out = self.forward(X)
@@ -35,26 +35,26 @@ class model():
 		return loss
 	def loss(self, X, y):
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        # foward propogation									 	  #
-		# Compute the output of model by matrix multiplication	 	  #
-		# Using np.maximum to implement ReLu layer 					  #
+        	# foward propogation    				      #
+		# Compute the output of model by matrix multiplication	      #
+		# Using np.maximum to implement ReLu layer        	      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		h1 = np.maximum(X @ self.params['w1'] + self.params['b1'] , 0)
 		h2 = np.maximum(h1 @ self.params['w2'] + self.params['b2'] , 0)
 		out = h2 @ self.params['w3'] + self.params['b3']
-		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		#	back propgation							     			  #
+		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+		#	back propgation					          #
 		#	The goal here is to using the chian rule to find out the  #
 		#	value of gradient and bias in order to update the model   #
-		# 	delta is the gradient of this mini batch				  # 
-		#	Cross_loss is the loss compute by cross entropy			  #
+		# 	delta is the gradient of this mini batch		  # 
+		#	Cross_loss is the loss compute by cross entropy		  #
 		#	Computation is done layer by layer. using the error that  #
-		# 	has computed in upper layer and then multiply with 	the	  #
+		# 	has computed in upper layer and then multiply with the	  #
 		# 	weight of current layer. After that multiple it with the  #
-		#	input of current layer									  #
+		#	input of current layer					  #
 		# 	the bias is just a simplt summation of the loss	of upper  #
-		#	layer.													  #
-		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+		#	layer.							  #
+		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		M = out - np.max(out)
 		correct_f = M[np.arange(X.shape[0]), y]
 		log_p = np.log(np.sum(np.exp(M), axis=1))
@@ -65,7 +65,7 @@ class model():
 		cross_loss[range(X.shape[0]), y] -= 1
 		cross_loss /= X.shape[0]
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		#	compute weight											  #
+		#	compute weight					      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		delta['w3'] = h2.T @ cross_loss
 		dh2 = cross_loss @ self.params['w3'].T
@@ -75,7 +75,7 @@ class model():
 		dh1[h1 == 0] = 0
 		delta['w1'] = X.T @ dh1
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		#	compute bias											  #
+		#	compute bias			    		      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		delta['b3'] = np.sum(cross_loss, axis=0)
 		delta['b2'] = np.sum(dh2, axis=0)
@@ -83,11 +83,11 @@ class model():
 		return loss, delta
 
 	def train(self, X, y, X_val, y_val):
-		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		#	train : train the model by gradient descend requires 	  #
-		#	iteration.												  #
+		#	iteration.						  #
 		#	We will handle input and output by loop	for a mini batch  #
-		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		num_train = X.shape[0]
 		number_epoch = max(num_train / self.batch_size, 1)
 		val_acc = 0.0
@@ -99,8 +99,8 @@ class model():
 		epoch_loss = 0
 		for i in range(self.steps):
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		# 	-Get the mini batch										  #
-		# 	-compute gradient										  #
+		# 	-Get the mini batch				      #
+		# 	-compute gradient				      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #	
 			batch_id = np.random.choice(a=num_train, size=self.batch_size, replace=True)
 			X_batch = X[batch_id]
@@ -109,9 +109,9 @@ class model():
 			loss, grads = self.loss(X_batch, y=y_batch)
 			epoch_loss += loss
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		#	update the parameter in model by SGD					  #
-		#	Which is delta * learning rate							  #
-		# 	the learning rate should be dacay (SGD)					  #
+		#	update the parameter in model by SGD		      #
+		#	Which is delta * learning rate			      #
+		# 	*the learning rate would dacay  		      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 			for param in self.params:
 				self.params[param] -= self.lr* grads[param]
@@ -123,10 +123,10 @@ class model():
 			# if it > 100000 and it% (iterations_per_epoch * 50) == 0:
 			# 	self.lr *= 0.85
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-		# 	tracking the performance of model						  #
-		#	-print loss and accuracy								  #
-		#	-append to list for plot the diagram					  #
-		#	-save the best model									  #
+		# 	tracking the performance of model    		      #
+		#	-print loss and accuracy			      #
+		#	-append to list for plot the diagram		      #
+		#	-save the best model				      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 			if i % 100 == 0:
 				print('loss: %f ,val_acc: %f' % (loss, val_acc))
@@ -151,10 +151,10 @@ class model():
 
 	def forward(self,X):
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        # foward propogation - this code is for convenient when no    #
-		# update is needed											  #
-		# Compute the output of model by matrix multiplication	 	  #
-		# Using np.maximum to implement ReLu layer 					  #
+        	# foward propogation - this code is for convenient when no    #
+		# update is needed					      #
+		# Compute the output of model by matrix multiplication	      #
+		# Using np.maximum to implement ReLu layer 		      #
 		# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 		scores = np.maximum(X@self.params['w1'] + self.params['b1'], 0) @ self.params['w2'] + self.params['b2']
 		h1 = np.maximum(X @ self.params['w1'] + self.params['b1'], 0)
@@ -167,7 +167,7 @@ class model():
 
 def get_data(path):
 	# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-	# 	-Get the data 											  #
+	# 	-Get the data 				              #
 	# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     data = pd.read_csv(path, sep='\s*,\s*',
                            header=0, encoding='ascii', engine='python')
